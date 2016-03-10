@@ -19,15 +19,19 @@ var users = [];
 var server = http.createServer(function(request,response){
     //把url转成url对象
     var urlObj = url.parse(request.url,true);
-
+    console.log(urlObj.pathname);
+    if(urlObj.pathname=="/favicon.ico"){
+        response.end();
+    }
 
     //pathname 指的是路径名 问号和端口号中间的那一部分
     if(urlObj.pathname == '/'){
+        console.log("根目录");
         response.writeHead(200,{'Content-Type':'text/html;charset=utf-8'});
-        fs.readFile('./reg.html',function(err,data){
+        fs.readFile('./ajax.html',function(err,data){
             response.end(data);
         })
-    }else if(urlObj.pathname == '/reg'){
+    }else if(urlObj.pathname == '/ajaxSever'){
         //每当服务器收到客户端发过来的一段数据的时候就会触发data事件
         var str = '';
         request.on('data',function(data){
@@ -35,15 +39,36 @@ var server = http.createServer(function(request,response){
         });
         //当所有的数据全部接收完毕的时候会会触发end事件，这时请求体的数据就接收完整了
         request.on('end',function(){
-            console.log(str);
             //转成对象追加到用户列表里
             users.push(JSON.parse(str));
             //最后返回用户列表
             response.end(str);
         })
     }
+    /*function isObjectValueEqual(a, b) {//判断两个引用类型的数据是否相等
+
+        if(a==undefined){
+            return false;
+        }
+        var aProps = Object.getOwnPropertyNames(a);
+        var bProps = Object.getOwnPropertyNames(b);
+
+        if (aProps.length != bProps.length) {
+            return false;
+        }
+
+        for (var i = 0; i < aProps.length; i++) {
+            var propName = aProps[i];
+
+            if (a[propName] !== b[propName]) {
+                return false;
+            }
+        }
+
+        return true;
+    }*/
 });
 //在8080端口上进行监听 ，主机名是localhost
 // 0 - 65535
 // ps -ef | grep node
-server.listen(8080,'localhost');
+server.listen(8086,'localhost');
